@@ -1,20 +1,15 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { createNewAnecdote } from '../reducers/anecdoteReducer'
-import { setNotification, removeNotification } from '../reducers/notificationReducer'
+import { showNotificationWithTimeout } from '../reducers/notificationReducer'
 
 const AnecdoteForm = (props) => {
-  const newAnecdote = (event) => {
+  const newAnecdote = async (event) => {
     event.preventDefault()
-    console.log(`AnecdoteForm`, props)
     let content = event.target.anecdote.value
-    props.createNewAnecdote(content)
-    if (content.length > 50) content = `${content.slice(0, 50)}...`
-    props.setNotification(`You added: '${content}`)
-    setTimeout(() => {
-      props.removeNotification()
-    }, 5000)
     event.target.anecdote.value = ''
+    props.createNewAnecdote(content)
+    props.showNotificationWithTimeout(`You created: ${content}`, 5)
   }
 
   return (
@@ -28,8 +23,7 @@ const AnecdoteForm = (props) => {
   )
 }
 
-
 export default connect(
   null,
-  { createNewAnecdote, setNotification, removeNotification }
+  { createNewAnecdote, showNotificationWithTimeout }
 )(AnecdoteForm)

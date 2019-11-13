@@ -1,16 +1,3 @@
-export const setNotification = (text) => {
-  return {
-    type: 'SET_NOTIFICATION',
-    text
-  }
-}
-
-export const removeNotification = () => {
-  return {
-    type: 'REMOVE_NOTIFICATION'
-  }
-}
-
 const notificationReducer = (state = null, action) => {
   switch (action.type) {
     case 'SET_NOTIFICATION':
@@ -22,5 +9,21 @@ const notificationReducer = (state = null, action) => {
   }
 }
 
+function showNotification(text) {
+  return { type: 'SET_NOTIFICATION', text }
+}
+function hideNotification() {
+  return { type: 'REMOVE_NOTIFICATION' }
+}
+
+export const showNotificationWithTimeout = (text, time) => {
+  return async (dispatch) => {
+    if (text.length > 50) text = `${text.slice(0, 50)}...`
+    dispatch(showNotification(text))
+    setTimeout(() => {
+      dispatch(hideNotification())
+    }, time * 1000)
+  }
+}
 
 export default notificationReducer

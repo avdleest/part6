@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { upVote } from '../reducers/anecdoteReducer'
-import { setNotification, removeNotification } from '../reducers/notificationReducer'
+import { showNotificationWithTimeout } from '../reducers/notificationReducer'
 
 const anecdotesToShow = ({ anecdotes, filter }) => {
   return (
@@ -14,13 +14,10 @@ const anecdotesToShow = ({ anecdotes, filter }) => {
 const AnecdotesList = (props) => {
   console.log(props)
 
-  const vote = (id, content) => {
-    if (content.length > 50) content = `${content.slice(0, 50)}...`
-    props.setNotification(`You voted on '${content}'`)
-    setTimeout(() => {
-      props.removeNotification()
-    }, 5000)
-    props.upVote(id)
+  const vote = ({ id, content, votes }) => {
+    props.upVote(id, votes, content)
+    props.showNotificationWithTimeout(`You voted on: ${content}`, 5)
+
   }
   const byVotes = (a1, a2) => a2.votes - a1.votes
 
@@ -32,8 +29,8 @@ const AnecdotesList = (props) => {
             {anecdote.content}
           </div>
           <div>
-            has {anecdote.votes}
-            <button onClick={() => vote(anecdote.id, anecdote.content)}>vote</button>
+            has {anecdote.votes} votes {'  '}
+            <button onClick={() => vote(anecdote)}>vote</button>
           </div>
         </div>
       )}
@@ -50,8 +47,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = {
   upVote,
-  setNotification,
-  removeNotification
+  showNotificationWithTimeout
 }
 
 export default connect(
